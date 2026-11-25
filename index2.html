@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10131a">
+<title>BlockTier — Minecraft PvP Rankings</title>
+<style>
+:root{--bg:#0b0e14;--panel:#121722;--panel2:#171e2b;--line:#283244;--text:#eef3fb;--muted:#9ba8bb;--green:#8de0a1;--green2:#2b8b5b;--blue:#8bbdff;--gold:#f3c969;--red:#ff8c8c;--shadow:0 16px 50px #0005}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#172236 0,#0b0e14 55%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.shell{max-width:1160px;margin:auto;padding:24px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:34px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.04em;font-size:22px}
+.logo{width:42px;height:42px;display:grid;place-items:center;border:1px solid #3a4a60;border-radius:13px;background:linear-gradient(145deg,#263a50,#17202c);font-size:22px;box-shadow:inset 0 1px #ffffff18}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.16em;font-weight:700;margin-top:-4px}
+.header-actions{display:flex;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:11px;padding:10px 14px;font-weight:750;transition:.15s}
+.btn:hover{transform:translateY(-1px);border-color:#53657e}
+.btn.primary{background:var(--green);border-color:var(--green);color:#102018}
+.btn.ghost{background:transparent}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;align-items:stretch;margin-bottom:24px}
+.hero-copy{padding:28px 4px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--green);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 14px #8de0a1}
+h1{font-size:clamp(34px,5.5vw,60px);line-height:1.02;letter-spacing:-.055em;margin:15px 0}
+h1 span{color:var(--green)}
+.hero-copy p{max-width:560px;color:var(--muted);font-size:16px;margin:0 0 20px}
+.hero-card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#1b2636,#111721);padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero-card:after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;background:#8de0a111;right:-70px;top:-80px}
+.hero-card-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.season{border:1px solid #3b4b60;border-radius:8px;padding:5px 8px;color:var(--blue);font-size:10px}
+.featured{display:flex;align-items:center;gap:15px;margin:22px 0}
+.avatar{width:58px;height:58px;border-radius:14px;background:#253548;border:1px solid #3c5068;display:grid;place-items:center;font-size:26px;flex-shrink:0}
+.featured strong{display:block;font-size:21px}
+.featured small{color:var(--muted)}
+.tier-pill{display:inline-flex;align-items:center;justify-content:center;min-width:54px;padding:7px 11px;border-radius:9px;font-weight:950;font-size:13px;color:#0d1118;background:var(--tier,#d6dbe4)}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;border-top:1px solid var(--line);padding-top:16px}
+.mini-stats b{font-size:21px;display:block}.mini-stats span{font-size:11px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.stat{background:#121722b8;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.stat strong{display:block;font-size:25px;letter-spacing:-.04em}.stat span{color:var(--muted);font-size:12px}
+.main-panel{border:1px solid var(--line);border-radius:18px;background:#111620e8;overflow:hidden;box-shadow:var(--shadow)}
+.panel-top{padding:20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.panel-top h2{margin:0;font-size:21px;letter-spacing:-.03em}.panel-top p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.filters{display:flex;gap:9px;flex-wrap:wrap}
+.field{background:#0c1119;border:1px solid #2b3545;color:var(--text);border-radius:10px;padding:10px 12px;min-height:42px;outline:none}
+.field:focus{border-color:var(--green)}
+.search{min-width:220px}
+.mode-tabs{display:flex;gap:7px;flex-wrap:wrap;padding:15px 20px 0}
+.tab{background:transparent;border:1px solid transparent;color:var(--muted);padding:8px 12px;border-radius:9px;font-size:12px;font-weight:850}
+.tab.active{background:#213328;border-color:#385b43;color:var(--green)}
+.tier-list{padding:16px 20px 22px}
+.tier-row{display:grid;grid-template-columns:82px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid #202938;align-items:start}
+.tier-row:last-child{border-bottom:0}
+.tier-label{min-height:42px;display:grid;place-items:center;border-radius:10px;font-weight:950;color:#10141a;background:var(--tier);letter-spacing:-.02em}
+.player-list{display:flex;gap:8px;flex-wrap:wrap;min-height:42px}
+.player-chip{display:flex;align-items:center;gap:8px;border:1px solid #2a3546;background:#171e2a;border-radius:10px;padding:7px 10px;max-width:100%}
+.player-chip .head{width:25px;height:25px;display:grid;place-items:center;background:#29394c;border-radius:7px;font-size:13px}
+.player-chip b{font-size:12px;overflow-wrap:anywhere}
+.player-chip small{display:block;color:var(--muted);font-size:10px}
+.player-chip:hover{border-color:#60758f}
+.empty{color:var(--muted);font-size:12px;padding:10px 0}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:11px;padding:18px 4px}
+.notice{margin:0 20px 20px;padding:12px 14px;background:#1c2736;border:1px solid #33445a;border-radius:11px;color:#b9c7d9;font-size:12px}
+.modal-backdrop{position:fixed;inset:0;background:#05070bd9;display:none;place-items:center;padding:16px;z-index:5}
+.modal-backdrop.open{display:grid}
+.modal{width:min(520px,100%);background:#121822;border:1px solid #344052;border-radius:18px;padding:22px;box-shadow:var(--shadow);max-height:90vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.modal h3{margin:0;font-size:22px}
+.close{border:0;background:#222c3b;color:var(--text);border-radius:9px;width:34px;height:34px;font-size:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:12px;color:var(--muted);font-weight:750}
+.form-group .field{width:100%}
+.form-actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.small-link{color:var(--blue);font-size:12px;background:none;border:0;padding:0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#d5f8dd;color:#112519;padding:11px 16px;border-radius:10px;font-weight:800;font-size:13px;box-shadow:var(--shadow);display:none;z-index:8}
+.toast.show{display:block}
+@media(max-width:760px){.shell{padding:16px}.hero{grid-template-columns:1fr}.hero-copy{padding:12px 0 0}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:21px}.panel-top{align-items:flex-start}.search{min-width:0;width:100%}.filters{width:100%}.filters .field{flex:1}.tier-row{grid-template-columns:64px 1fr;gap:10px}.tier-list{padding:12px}.panel-top{padding:16px}.mode-tabs{padding:12px 12px 0}.notice{margin:0 12px 12px}}
+@media(max-width:420px){header{align-items:flex-start}.brand{font-size:18px}.header-actions .btn{padding:9px 10px;font-size:12px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <a class="brand" href="#" aria-label="BlockTier accueil"><span class="logo">⚔</span><span>BLOCKTIER<small>MINECRAFT PVP RANKINGS</small></span></a>
+  <div class="header-actions"><button class="btn ghost" id="resetBtn" title="Réinitialiser les données de démonstration">Réinitialiser</button><button class="btn primary" id="addBtn">＋ Ajouter un joueur</button></div>
+</header>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="dot"></span> Classements communautaires</div>
+    <h1>Qui domine<br>le <span>PvP&nbsp;?</span></h1>
+    <p>Explore les tiers, découvre les joueurs et suis les classements de tes modes PvP Minecraft préférés.</p>
+    <button class="btn primary" id="browseBtn">Explorer les tiers ↓</button>
+  </div>
+  <aside class="hero-card">
+    <div class="hero-card-head"><span>Joueur à la une</span><span class="season">SAISON 01</span></div>
+    <div class="featured"><div class="avatar">⛏</div><div><strong id="featuredName">—</strong><small id="featuredMode">—</small></div><span class="tier-pill" id="featuredTier">HT1</span></div>
+    <div class="mini-stats"><div><b id="topCount">0</b><span>Joueurs</span></div><div><b id="modeCount">0</b><span>Modes</span></div><div><b id="tierCount">10</b><span>Tiers</span></div></div>
+  </aside>
+</section>
+
+<div class="stats">
+  <div class="stat"><strong id="totalPlayers">0</strong><span>Joueurs listés</span></div>
+  <div class="stat"><strong id="totalModes">0</strong><span>Modes PvP</span></div>
+  <div class="stat"><strong id="visiblePlayers">0</strong><span>Résultats affichés</span></div>
+</div>
+
+<section class="main-panel" id="rankings">
+  <div class="panel-top">
+    <div><h2>Tier list</h2><p>Les meilleurs tiers apparaissent en premier.</p></div>
+    <div class="filters">
+      <input class="field search" id="searchInput" type="search" placeholder="Rechercher un pseudo…" aria-label="Rechercher un pseudo">
+      <select class="field" id="regionFilter" aria-label="Filtrer par région"><option value="all">Toutes régions</option><option>EU</option><option>NA</option><option>AS</option><option>OCE</option><option>SA</option></select>
+    </div>
+  </div>
+  <div class="mode-tabs" id="modeTabs"></div>
+  <div class="tier-list" id="tierList"></div>
+  <div class="notice">ℹ️ Les joueurs affichés au départ sont des exemples. Les ajouts sont sauvegardés dans ce navigateur uniquement.</div>
+</section>
+<footer><span>BLOCKTIER · Classements communautaires Minecraft</span><span>Prototype v0.1 · Non affilié à Mojang</span></footer>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <form class="modal" id="playerForm">
+    <div class="modal-head"><h3 id="modalTitle">Ajouter un joueur</h3><button type="button" class="close" id="closeModal" aria-label="Fermer">×</button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label for="playerName">Pseudo Minecraft</label><input class="field" id="playerName" name="name" maxlength="32" placeholder="Ex. StevePvP" required></div>
+      <div class="form-group full"><label>Tier de chaque mode (laisse « Non classé » si besoin)</label><div class="form-grid" id="modeTierFields"></div></div>
+      <div class="form-group"><label for="playerRegion">Région</label><select class="field" id="playerRegion" name="region"><option>EU</option><option>NA</option><option>AS</option><option>OCE</option><option>SA</option></select></div>
+      <div class="form-group"><label for="playerNote">Note (facultatif)</label><input class="field" id="playerNote" name="note" maxlength="80" placeholder="Ex. test récent"></div>
+    </div>
+    <div class="form-actions"><button type="button" class="small-link" id="exportBtn">Exporter les données JSON</button><button class="btn primary" type="submit">Enregistrer le joueur</button></div>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const TIERS = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
+const MODES = ["Sword","Crystal","Axe","UHC","Pot","SMP","Mace","Vanilla"];
+const COLORS = {"HT1":"#f3c969","LT1":"#e7b85e","HT2":"#e69b63","LT2":"#dc8c68","HT3":"#c985a4","LT3":"#b67fae","HT4":"#9a8bd0","LT4":"#8199d6","HT5":"#7daecf","LT5":"#79b9b0"};
+const demo = [
+ {name:"NovaBlade",region:"EU",note:"Exemple",tiers:{Sword:"HT1",Crystal:"LT2",Axe:"HT2",UHC:"LT1",Pot:"HT3",SMP:"HT2",Mace:"LT2",Vanilla:"HT2"}},
+ {name:"EnderAce",region:"NA",note:"Exemple",tiers:{Sword:"LT1",Crystal:"HT2",Axe:"LT3",UHC:"HT2",Pot:"LT1",SMP:"HT3",Mace:"HT3",Vanilla:"LT2"}},
+ {name:"CrystalFox",region:"EU",note:"Exemple",tiers:{Sword:"HT2",Crystal:"HT1",Axe:"LT2",UHC:"HT3",Pot:"HT2",SMP:"LT1",Mace:"HT1",Vanilla:"HT3"}},
+ {name:"Obsidian",region:"AS",note:"Exemple",tiers:{Sword:"HT3",Crystal:"HT2",Axe:"HT1",UHC:"LT2",Pot:"LT2",SMP:"HT1",Mace:"LT1",Vanilla:"HT1"}},
+ {name:"AxeKnight",region:"EU",note:"Exemple",tiers:{Sword:"LT2",Crystal:"HT3",Axe:"LT1",UHC:"HT1",Pot:"HT4",SMP:"LT2",Mace:"HT2",Vanilla:"LT1"}},
+ {name:"TotemRush",region:"NA",note:"Exemple",tiers:{Sword:"HT2",Crystal:"LT1",Axe:"HT3",UHC:"HT2",Pot:"HT1",SMP:"HT4",Mace:"LT1",Vanilla:"HT4"}},
+ {name:"PearlStorm",region:"EU",note:"Exemple",tiers:{Sword:"LT3",Crystal:"LT2",Axe:"HT4",UHC:"LT1",Pot:"LT2",SMP:"HT2",Mace:"HT4",Vanilla:"HT3"}},
+ {name:"BlockWizard",region:"OCE",note:"Exemple",tiers:{Sword:"HT4",Crystal:"HT3",Axe:"LT2",UHC:"HT3",Pot:"HT3",SMP:"HT3",Mace:"LT3",Vanilla:"HT2"}},
+ {name:"MaceDrop",region:"EU",note:"Exemple",tiers:{Sword:"LT2",Crystal:"HT4",Axe:"LT1",UHC:"LT3",Pot:"HT4",SMP:"LT1",Mace:"HT1",Vanilla:"LT4"}},
+ {name:"SteveClassic",region:"SA",note:"Exemple",tiers:{Sword:"HT5",Crystal:"LT3",Axe:"HT5",UHC:"HT4",Pot:"LT4",SMP:"HT4",Mace:"LT4",Vanilla:"HT1"}}
+];
+let players = loadPlayers();
+let activeMode = "Sword";
+const $ = id => document.getElementById(id);
+function normalizePlayer(p){
+ if(p.tiers) return {...p,tiers:p.tiers};
+ // Migration automatique des anciennes fiches à un seul mode
+ const tiers={}; if(p.mode && p.tier) tiers[p.mode]=p.tier;
+ return {id:p.id||crypto.randomUUID(),name:p.name,region:p.region||"EU",note:p.note||"",tiers};
+}
+function loadPlayers(){try{const raw=localStorage.getItem("blocktier_players");return raw?JSON.parse(raw).map(normalizePlayer):demo.map(p=>({...p,id:crypto.randomUUID()}));}catch(e){return demo.map(p=>({...p,id:crypto.randomUUID()}));}}
+function savePlayers(){localStorage.setItem("blocktier_players",JSON.stringify(players));}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function tierIndex(t){return TIERS.indexOf(t);}
+function modeOptions(){return MODES.map(m=>`<option>${m}</option>`).join("");}
+function tierOptions(){return TIERS.map(t=>`<option value="${t}">${t}</option>`).join("");}
+function filteredPlayers(){const q=$("searchInput").value.trim().toLowerCase(),r=$("regionFilter").value;return players.filter(p=>p.tiers?.[activeMode]&&(!q||p.name.toLowerCase().includes(q))&&(r==="all"||p.region===r));}
+function render(){
+ const tabs=$("modeTabs");tabs.innerHTML=MODES.map(m=>`<button class="tab ${m===activeMode?"active":""}" data-mode="${m}">${m}</button>`).join("");
+ tabs.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeMode=b.dataset.mode;render();}));
+ const filtered=filteredPlayers();$("tierList").innerHTML=TIERS.map(t=>{
+  const group=filtered.filter(p=>p.tiers?.[activeMode]===t).sort((a,b)=>a.name.localeCompare(b.name));
+  return `<div class="tier-row"><div class="tier-label" style="--tier:${COLORS[t]}">${t}</div><div class="player-list">${group.length?group.map(p=>`<div class="player-chip" title="${escapeHtml(p.note||"")}"><span class="head">⛏</span><span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.region)}${p.note?" · "+escapeHtml(p.note):""}</small></span><button class="small-link" data-delete="${p.id}" aria-label="Supprimer ${escapeHtml(p.name)}">×</button></div>`).join(""):`<span class="empty">Aucun joueur dans ce tier</span>`}</div></div>`;
+ }).join("");
+ $("totalPlayers").textContent=players.length;$("topCount").textContent=players.length;$("visiblePlayers").textContent=filtered.length;
+ $("totalModes").textContent=MODES.filter(m=>players.some(p=>p.tiers?.[m])).length;$("modeCount").textContent=MODES.filter(m=>players.some(p=>p.tiers?.[m])).length;
+ $("tierCount").textContent=TIERS.length;
+ const featured=players.find(p=>Object.values(p.tiers||{}).includes("HT1"))||players[0];
+ const featuredMode=featured?(MODES.find(m=>featured.tiers?.[m]==="HT1")||MODES.find(m=>featured.tiers?.[m])||"Sword"):"";
+ const featuredTier=featured?(featured.tiers?.[featuredMode]||"—"):"—";
+ $("featuredName").textContent=featured?featured.name:"Aucun joueur";$("featuredMode").textContent=featured?featuredMode+" · "+featured.region:"Ajoute le premier joueur";
+ $("featuredTier").textContent=featuredTier;if(featured)$("featuredTier").style.setProperty("--tier",COLORS[featuredTier]||"#d6dbe4");
+ $("modeTierFields").innerHTML=MODES.map(m=>`<div class="form-group"><label for="tier_${m}">${m}</label><select class="field" id="tier_${m}" name="tier_${m}"><option value="">Non classé</option>${tierOptions()}</select></div>`).join("");
+ $("tierList").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{players=players.filter(p=>String(p.id)!==String(b.dataset.delete));savePlayers();render();showToast("Joueur supprimé");}));
+}
+function openModal(){$("modalBackdrop").classList.add("open");$("playerName").focus();}
+function closeModal(){$("modalBackdrop").classList.remove("open");}
+function showToast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2300);}
+$("addBtn").addEventListener("click",openModal);$("closeModal").addEventListener("click",closeModal);
+$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal();});
+$("searchInput").addEventListener("input",render);$("regionFilter").addEventListener("change",render);
+$("browseBtn").addEventListener("click",()=>$("rankings").scrollIntoView({behavior:"smooth"}));
+$("resetBtn").addEventListener("click",()=>{if(confirm("Réinitialiser la liste avec les joueurs d’exemple ?")){players=demo.map(p=>({...p,id:crypto.randomUUID()}));savePlayers();render();showToast("Données de démonstration restaurées");}});
+$("playerForm").addEventListener("submit",e=>{e.preventDefault();const data=new FormData(e.currentTarget);const name=String(data.get("name")).trim();if(!name)return;
+ const tiers={};MODES.forEach(m=>{const t=data.get("tier_"+m);if(t)tiers[m]=t;});
+ if(Object.keys(tiers).length===0){showToast("Choisis au moins un tier");return;}
+ const existing=players.find(p=>p.name.toLowerCase()===name.toLowerCase());
+ if(existing){existing.region=data.get("region");existing.note=String(data.get("note")).trim();existing.tiers={...existing.tiers,...tiers};}
+ else players.push({id:crypto.randomUUID(),name,region:data.get("region"),note:String(data.get("note")).trim(),tiers});
+ savePlayers();activeMode=Object.keys(tiers)[0];e.currentTarget.reset();closeModal();render();showToast(existing?"Classements du joueur mis à jour":"Joueur ajouté dans ses modes");});
+$("exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(players,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="blocktier-joueurs.json";a.click();URL.revokeObjectURL(url);});
+render();
+</script>
+</body>
+</html>
